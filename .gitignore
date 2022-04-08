@@ -9,3 +9,4 @@ build/
 dist/
 *.egg-info/
 .idea
+request/~$spiderRecord.xlsx

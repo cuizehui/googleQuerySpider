@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import random
@@ -24,7 +25,8 @@ class TestMagicGoogle(unittest.TestCase):
 
     def test_search_url(self):
         sleep = random.randint(2, 15)
-        result = list(self.mg.search_url(query='123', num=1, pause=sleep))
+        result = list(self.mg.search_url(query='python', num=1, pause=sleep))
+        logging.debug("nela", result[0])
         self.assertEqual(result[0], 'https://www.python.org/', 'test search_url fail')
 
 

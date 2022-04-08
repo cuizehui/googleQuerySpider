@@ -34,7 +34,11 @@ class MagicGoogle:
     Magic google search.
     """
 
-    def __init__(self, proxies=None):
+    def __init__(self):
+        proxies = [{
+            'http': 'http://127.0.0.1:7890',
+            'https': 'http://127.0.0.1:7890'
+        }]
         self.config = Config
         self.logger = get_logger()
         self.domain_list = get_data(file_path=self.config.DOMAIN_PATH)
@@ -54,7 +58,7 @@ class MagicGoogle:
         Yields:
             [type]: {}
         """
-        content = self.search_page(query, language, num, start, pause, country)
+        content = self.search_inside_page(query, language, num, start, pause, country)
         pq_content = pq(content)
         for p in pq_content.items("a"):
             if p.attr("href").startswith("/url?q="):
@@ -87,7 +91,7 @@ class MagicGoogle:
         Yields:
             [type]: [url]
         """
-        content = self.search_page(query, language, num, start, pause, country)
+        content = self.search_inside_page(query, language, num, start, pause, country)
         pq_content = pq(content)
 
         for p in pq_content.items("a"):
@@ -140,9 +144,10 @@ class MagicGoogle:
         headers = {"user-agent": self.get_random_user_agent()}
         try:
             time.sleep(pause)
+            self.logger.info(url)
             r = requests.get(
                 url=url,
-                # proxies=self.proxies,
+                proxies=self.proxies,
                 headers=headers,
                 allow_redirects=False,
                 verify=False,
@@ -151,11 +156,14 @@ class MagicGoogle:
             content = r.content
             charset = cchardet.detect(content)
             text = content.decode(charset["encoding"])
-            self.logger.info(url)
+
             return text
         except Exception as e:
             self.logger.exception(e)
             return None
+
+
+
 
     def get_random_user_agent(self):
         """Get a random user agent string.
